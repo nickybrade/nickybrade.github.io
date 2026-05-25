@@ -7,21 +7,26 @@
   <style>
     :root {
       color-scheme: light;
-      --ink: #1f2933;
-      --muted: #5f6c7b;
-      --line: #d7dee8;
-      --paper: #f7f9fc;
-      --panel: #ffffff;
-      --accent: #176f6b;
-      --accent-2: #9a5b16;
-      --accent-3: #315b9d;
-      --good: #25745a;
-      --warn: #a36414;
-      --shadow: 0 12px 28px rgba(31, 41, 51, .09);
+      --ink: #111827;
+      --muted: #667085;
+      --line: rgba(148, 163, 184, .28);
+      --paper: #f3f6fb;
+      --panel: rgba(255, 255, 255, .78);
+      --accent: #0f766e;
+      --accent-2: #b25b12;
+      --accent-3: #2563eb;
+      --good: #16a34a;
+      --warn: #b45309;
+      --shadow: 0 18px 48px rgba(15, 23, 42, .10);
+      --shadow-soft: 0 10px 28px rgba(15, 23, 42, .07);
+      --glass: rgba(255, 255, 255, .72);
+      --glass-strong: rgba(255, 255, 255, .86);
+      --ring: rgba(15, 118, 110, .24);
       --ios-blue: #007aff;
       --ios-green: #34c759;
       --ios-red: #ff3b30;
       --ios-fill: rgba(118, 118, 128, .12);
+      --ease-ios: cubic-bezier(.2, .9, .2, 1);
     }
 
     * {
@@ -32,8 +37,30 @@
       margin: 0;
       font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
       color: var(--ink);
-      background: var(--paper);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(37, 99, 235, .08), transparent 28%),
+        radial-gradient(circle at 82% 4%, rgba(15, 118, 110, .10), transparent 26%),
+        linear-gradient(180deg, #f8fafc 0%, var(--paper) 42%, #eef3f8 100%);
       line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    @keyframes soft-rise {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0) scale(.985);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes ios-press-pop {
+      0% { transform: scale(.98); }
+      60% { transform: scale(1.012); }
+      100% { transform: scale(1); }
     }
 
     header {
@@ -178,47 +205,61 @@
       position: sticky;
       top: 0;
       z-index: 5;
-      background: rgba(255, 255, 255, .86);
+      background: var(--glass-strong);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-soft);
       padding: 14px;
       display: grid;
       grid-template-columns: minmax(220px, 1fr) auto auto;
       gap: 12px;
       align-items: center;
-      backdrop-filter: blur(18px);
-      border-radius: 18px;
+      backdrop-filter: blur(22px) saturate(1.25);
+      border-radius: 22px;
+      animation: soft-rise .48s var(--ease-ios) both;
     }
 
     .module-nav {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 18px;
+      padding: 2px;
     }
 
     .module-tab {
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, .9);
+      background: var(--glass);
       color: var(--ink);
-      border-radius: 18px;
+      border-radius: 22px;
       min-height: 86px;
       padding: 14px;
       text-align: left;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(31, 41, 51, .05);
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px) saturate(1.2);
+      transition:
+        transform .22s var(--ease-ios),
+        border-color .22s var(--ease-ios),
+        background .22s var(--ease-ios),
+        box-shadow .22s var(--ease-ios);
+      animation: soft-rise .48s var(--ease-ios) both;
     }
 
     .module-tab:hover {
-      transform: translateY(-1px);
+      transform: translateY(-3px);
       border-color: var(--accent);
+      box-shadow: 0 20px 44px rgba(15, 23, 42, .12);
+    }
+
+    .module-tab:active {
+      transform: translateY(0) scale(.985);
     }
 
     .module-tab.active {
-      background: #edf7f6;
+      background: linear-gradient(180deg, rgba(236, 253, 245, .92), rgba(224, 242, 254, .72));
       border-color: var(--accent);
       color: var(--accent);
+      box-shadow: 0 18px 42px rgba(15, 118, 110, .14);
     }
 
     .module-tab strong {
@@ -239,6 +280,7 @@
 
     .module-panel.active {
       display: block;
+      animation: soft-rise .34s var(--ease-ios) both;
     }
 
     .search {
@@ -246,9 +288,17 @@
       align-items: center;
       gap: 10px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, .82);
       padding: 0 12px;
       min-height: 44px;
+      border-radius: 16px;
+      transition: border-color .2s var(--ease-ios), box-shadow .2s var(--ease-ios), background .2s var(--ease-ios);
+    }
+
+    .search:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 5px var(--ring);
+      background: #fff;
     }
 
     .search span {
@@ -269,8 +319,15 @@
     select {
       min-height: 44px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, .82);
       padding: 0 12px;
+      border-radius: 16px;
+      transition: border-color .2s var(--ease-ios), box-shadow .2s var(--ease-ios);
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 5px var(--ring);
     }
 
     .count {
@@ -295,9 +352,12 @@
     }
 
     .panel {
-      background: var(--panel);
+      background: var(--glass);
       border: 1px solid var(--line);
       padding: 18px;
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px) saturate(1.18);
     }
 
     h2,
@@ -319,7 +379,7 @@
 
     .filter-btn {
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, .82);
       color: var(--ink);
       min-height: 40px;
       padding: 0 12px;
@@ -329,16 +389,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-radius: 14px;
+      transition: transform .18s var(--ease-ios), border-color .18s var(--ease-ios), background .18s var(--ease-ios);
+    }
+
+    .filter-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(15, 118, 110, .42);
     }
 
     .topic-toggle {
       min-height: 48px;
       border-radius: 16px;
       border-color: var(--accent);
-      background: #edf7f6;
+      background: linear-gradient(180deg, rgba(236, 253, 245, .95), rgba(224, 242, 254, .72));
       color: var(--accent);
       font-weight: 800;
-      box-shadow: 0 10px 24px rgba(23, 111, 107, .1);
+      box-shadow: 0 12px 28px rgba(15, 118, 110, .12);
     }
 
     summary.topic-toggle {
@@ -366,9 +433,10 @@
       margin-top: 8px;
       padding: 10px;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, .96);
-      box-shadow: 0 18px 38px rgba(31, 41, 51, .13);
+      border-radius: 20px;
+      background: var(--glass-strong);
+      box-shadow: 0 18px 38px rgba(15, 23, 42, .13);
+      backdrop-filter: blur(18px) saturate(1.2);
       max-height: 430px;
       overflow: auto;
     }
@@ -379,6 +447,7 @@
 
     .topic-picker[open] .topic-menu {
       display: grid;
+      animation: soft-rise .24s var(--ease-ios) both;
     }
 
     .filter-btn.active {
@@ -422,14 +491,28 @@
     }
 
     .card {
-      background: var(--panel);
+      background: rgba(255, 255, 255, .82);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 24px;
       padding: 18px;
       display: grid;
       gap: 13px;
       min-height: 310px;
-      box-shadow: 0 10px 28px rgba(31, 41, 51, .06);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px) saturate(1.16);
+      transition:
+        transform .24s var(--ease-ios),
+        box-shadow .24s var(--ease-ios),
+        border-color .24s var(--ease-ios),
+        background .24s var(--ease-ios);
+      animation: soft-rise .42s var(--ease-ios) both;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(15, 118, 110, .32);
+      box-shadow: 0 24px 54px rgba(15, 23, 42, .14);
+      background: rgba(255, 255, 255, .92);
     }
 
     .card-top {
@@ -453,22 +536,29 @@
     }
 
     .tag {
-      border: 1px solid #cad4df;
-      background: #f4f7fb;
-      color: #35475b;
+      border: 1px solid rgba(148, 163, 184, .36);
+      background: rgba(248, 250, 252, .82);
+      color: #344054;
       font-size: 12px;
       padding: 3px 8px;
       border-radius: 999px;
       white-space: nowrap;
+      transition: background .18s var(--ease-ios), transform .18s var(--ease-ios);
+    }
+
+    .tag:hover {
+      background: #fff;
+      transform: translateY(-1px);
     }
 
     .difficulty {
       white-space: nowrap;
       font-size: 12px;
       color: #fff;
-      background: var(--accent-2);
+      background: linear-gradient(135deg, var(--accent-2), #7c2d12);
       padding: 4px 8px;
       border-radius: 999px;
+      box-shadow: 0 8px 18px rgba(178, 91, 18, .18);
     }
 
     .description {
@@ -499,10 +589,11 @@
 
     .note {
       border-left: 3px solid var(--accent);
-      background: #eef8f7;
+      background: rgba(236, 253, 245, .74);
       padding: 10px 12px;
       color: #245450;
       font-size: 14px;
+      border-radius: 0 14px 14px 0;
     }
 
     .card-actions {
@@ -513,8 +604,12 @@
     }
 
     .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       border: 1px solid var(--accent);
-      background: var(--accent);
+      background: linear-gradient(135deg, #0f766e, #0a8b98);
       color: #fff;
       min-height: 38px;
       padding: 0 12px;
@@ -522,19 +617,35 @@
       cursor: pointer;
       border-radius: 999px;
       font-weight: 700;
-      box-shadow: 0 8px 18px rgba(23, 111, 107, .18);
-      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+      line-height: 1.2;
+      box-shadow: 0 10px 22px rgba(15, 118, 110, .22);
+      transition:
+        transform .18s var(--ease-ios),
+        box-shadow .18s var(--ease-ios),
+        background .18s var(--ease-ios),
+        filter .18s var(--ease-ios);
     }
 
     .action-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 22px rgba(23, 111, 107, .22);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(15, 118, 110, .28);
+      filter: saturate(1.08);
+    }
+
+    .action-btn:active {
+      animation: ios-press-pop .26s var(--ease-ios);
+      transform: scale(.985);
     }
 
     .action-btn.secondary {
-      background: #fff;
+      background: rgba(255, 255, 255, .78);
       color: var(--accent);
       box-shadow: none;
+      backdrop-filter: blur(12px);
+    }
+
+    #questionnaireCards .card-actions {
+      justify-content: center;
     }
 
     .modal {
@@ -545,8 +656,8 @@
       align-items: center;
       justify-content: center;
       padding: 18px;
-      background: rgba(15, 23, 42, .46);
-      backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, .38);
+      backdrop-filter: blur(18px) saturate(1.15);
     }
 
     .modal.open {
@@ -557,11 +668,28 @@
       width: min(900px, 100%);
       max-height: min(760px, calc(100vh - 36px));
       overflow: auto;
-      background: rgba(255, 255, 255, .96);
+      background: rgba(255, 255, 255, .88);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow: 0 32px 80px rgba(15, 23, 42, .25);
       padding: 22px;
-      border-radius: 26px;
+      border-radius: 30px;
+      backdrop-filter: blur(24px) saturate(1.22);
+      animation: ios-modal-in .38s var(--ease-ios) both;
+    }
+
+    @keyframes ios-modal-in {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0) scale(.965);
+      }
+      70% {
+        opacity: 1;
+        transform: translate3d(0, -2px, 0) scale(1.01);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
     }
 
     .modal-head {
@@ -581,6 +709,12 @@
       line-height: 1;
       cursor: pointer;
       border-radius: 50%;
+      transition: transform .18s var(--ease-ios), background .18s var(--ease-ios);
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg) scale(1.04);
+      background: rgba(255, 255, 255, .78);
     }
 
     .detail-grid {
@@ -608,9 +742,12 @@
       place-items: center;
       text-align: center;
       border: 1px solid rgba(215, 222, 232, .9);
-      background: linear-gradient(180deg, #fbfcff, #f3f7fb);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(37, 99, 235, .08), transparent 34%),
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(241,245,249,.82));
       padding: 26px;
       border-radius: 24px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
     }
 
     .runner-stimulus {
@@ -735,10 +872,12 @@
 
     .runner-feedback.good {
       color: var(--ios-green);
+      animation: ios-press-pop .34s var(--ease-ios);
     }
 
     .runner-feedback.bad {
       color: var(--ios-red);
+      animation: ios-press-pop .34s var(--ease-ios);
     }
 
     .runner-results {
@@ -783,6 +922,79 @@
       margin-bottom: 8px;
     }
 
+    .questionnaire-detail {
+      display: grid;
+      gap: 14px;
+    }
+
+    .questionnaire-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(248, 250, 252, .86);
+      padding: 14px;
+    }
+
+    .questionnaire-panel h3 {
+      margin-bottom: 10px;
+      color: var(--accent-3);
+      font-size: 16px;
+    }
+
+    .questionnaire-panel ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .questionnaire-panel li + li {
+      margin-top: 6px;
+    }
+
+    .reference-query {
+      margin-top: 10px;
+      border: 1px dashed rgba(15, 118, 110, .34);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(236, 253, 245, .62);
+      color: #245450;
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .preview-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .preview-item {
+      border: 1px solid rgba(148, 163, 184, .32);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+      padding: 10px 12px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+
+    .preview-item small {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .questionnaire-notice {
+      border-left: 3px solid #b25b12;
+      background: rgba(255, 247, 237, .9);
+      color: #7c2d12;
+      padding: 12px 14px;
+      border-radius: 0 16px 16px 0;
+      line-height: 1.6;
+    }
+
     .doi-link {
       color: var(--accent);
       font-weight: 800;
@@ -816,11 +1028,13 @@
 
     .method-lab {
       margin-bottom: 20px;
-      background: rgba(255, 255, 255, .92);
+      background: var(--glass);
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 18px;
-      box-shadow: 0 10px 28px rgba(31, 41, 51, .06);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px) saturate(1.16);
+      animation: soft-rise .4s var(--ease-ios) both;
     }
 
     .method-lab textarea {
@@ -833,7 +1047,139 @@
       margin: 12px 0;
       font: inherit;
       line-height: 1.55;
-      background: #fbfcff;
+      background: rgba(255, 255, 255, .82);
+      transition: border-color .2s var(--ease-ios), box-shadow .2s var(--ease-ios), background .2s var(--ease-ios);
+    }
+
+    .method-lab textarea:focus {
+      outline: 0;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 5px var(--ring);
+      background: #fff;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+      gap: 16px;
+      align-items: start;
+      margin-top: 14px;
+    }
+
+    .workbench-table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .workbench-table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .workbench-table th,
+    .workbench-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .workbench-table th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      background: rgba(248, 250, 252, .86);
+    }
+
+    .workbench-table input,
+    .workbench-table select {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 10px;
+      background: rgba(255, 255, 255, .86);
+      transition: border-color .18s var(--ease-ios), box-shadow .18s var(--ease-ios), transform .18s var(--ease-ios);
+    }
+
+    .workbench-table input:focus,
+    .workbench-table select:focus {
+      outline: 0;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--ring);
+      transform: translateY(-1px);
+    }
+
+    .mini-btn {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .82);
+      min-height: 32px;
+      min-width: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--accent);
+      transition: transform .16s var(--ease-ios), background .16s var(--ease-ios), border-color .16s var(--ease-ios);
+    }
+
+    .mini-btn:hover {
+      transform: translateY(-1px);
+      background: #fff;
+      border-color: var(--accent);
+    }
+
+    .workbench-preview {
+      display: grid;
+      gap: 10px;
+    }
+
+    .preview-trial {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(248, 250, 252, .82);
+      padding: 12px;
+      transition: transform .2s var(--ease-ios), box-shadow .2s var(--ease-ios);
+    }
+
+    .preview-trial:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .preview-trial strong {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stimulus-demo {
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: #05070a;
+      color: #fff;
+      font-size: 34px;
+      font-weight: 800;
+      margin: 8px 0;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 10px 26px rgba(15,23,42,.16);
+    }
+
+    .stimulus-demo img {
+      max-width: 100%;
+      max-height: 110px;
+      object-fit: contain;
+    }
+
+    @media (max-width: 980px) {
+      .workbench-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .flow-preview {
@@ -846,10 +1192,17 @@
     .flow-node {
       border: 1px solid var(--line);
       border-radius: 16px;
-      background: #f8fafc;
+      background: rgba(248, 250, 252, .84);
       padding: 12px;
       min-height: 86px;
       position: relative;
+      transition: transform .2s var(--ease-ios), box-shadow .2s var(--ease-ios), background .2s var(--ease-ios);
+    }
+
+    .flow-node:hover {
+      transform: translateY(-2px);
+      background: #fff;
+      box-shadow: var(--shadow-soft);
     }
 
     .flow-node strong {
@@ -872,11 +1225,12 @@
       opacity: 0;
       pointer-events: none;
       max-width: min(680px, calc(100% - 32px));
-      background: rgba(31, 41, 51, .94);
+      background: rgba(17, 24, 39, .88);
       color: #fff;
       border-radius: 18px;
       padding: 12px 16px;
       box-shadow: 0 18px 38px rgba(31, 41, 51, .22);
+      backdrop-filter: blur(18px) saturate(1.2);
       transition: opacity .18s ease, transform .18s ease;
     }
 
@@ -891,16 +1245,16 @@
       bottom: 20px;
       z-index: 45;
       width: min(420px, calc(100% - 32px));
-      background: rgba(255, 255, 255, .88);
+      background: rgba(255, 255, 255, .82);
       border: 1px solid var(--line);
       border-radius: 22px;
-      box-shadow: 0 18px 42px rgba(31, 41, 51, .2);
+      box-shadow: 0 30px 70px rgba(15, 23, 42, .22);
       padding: 16px;
       opacity: 0;
       pointer-events: none;
       transform: translate3d(0, 26px, 0) scale(.96);
       transform-origin: 90% 100%;
-      backdrop-filter: blur(22px) saturate(1.35);
+      backdrop-filter: blur(26px) saturate(1.36);
       transition:
         opacity .22s ease,
         transform .42s cubic-bezier(.2, 1.24, .34, 1);
@@ -929,6 +1283,15 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+
       .download-notice {
         transition: none;
       }
@@ -971,9 +1334,17 @@
 
     .step {
       border-top: 4px solid var(--accent-3);
-      background: #f6f8fb;
+      background: rgba(255, 255, 255, .74);
       padding: 14px;
       min-height: 136px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      transition: transform .2s var(--ease-ios), box-shadow .2s var(--ease-ios);
+    }
+
+    .step:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(15, 23, 42, .12);
     }
 
     .step strong {
@@ -999,8 +1370,7 @@
       .layout,
       .intro-grid,
       .cards,
-      .map-grid,
-      .module-nav {
+      .map-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1010,6 +1380,17 @@
 
       .toolbar {
         position: static;
+      }
+
+      .preview-list {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 640px) {
+      .module-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -1046,11 +1427,15 @@
       <p class="lead">计算机化心理学实验任务平台。检索经典范式，复现实验流程，在线试测并导出可分析数据。</p>
       <div class="mission-meta" aria-label="平台概览">
         <div class="mission-stat">
-          <strong>166</strong>
+          <strong>100+</strong>
           <span>Task Protocols</span>
         </div>
         <div class="mission-stat">
-          <strong>SCI</strong>
+          <strong>100+</strong>
+          <span>Questionnaire Index</span>
+        </div>
+        <div class="mission-stat">
+          <strong>SCI/SSCI</strong>
           <span>Method Templates</span>
         </div>
         <div class="mission-stat">
@@ -1070,6 +1455,14 @@
       <button class="module-tab" type="button" data-module="method">
         <strong>论文流程复现</strong>
         <span>粘贴 Methods 生成实验预览</span>
+      </button>
+      <button class="module-tab" type="button" data-module="workbench">
+        <strong>自定义工作台</strong>
+        <span>像简化版 E-Prime 一样配置试次</span>
+      </button>
+      <button class="module-tab" type="button" data-module="questionnaires">
+        <strong>问卷量表库</strong>
+        <span>原始语境与中文语境对照</span>
       </button>
       <button class="module-tab" type="button" data-module="templates">
         <strong>绘图模板</strong>
@@ -1119,6 +1512,59 @@
           </div>
           <div class="flow-preview" id="methodPreview"></div>
         </section>
+    </section>
+
+    <section class="module-panel" data-panel="workbench">
+      <section class="method-lab">
+        <h2>自定义实验工作台</h2>
+        <p class="description">用表格配置试次：选择刺激类型、填写内容、设置呈现时长和正确按键，然后预览、运行或导出配置。适合新手快速搭建简单反应时实验。</p>
+        <div class="card-actions">
+          <button class="action-btn" type="button" id="addWorkbenchTrial">添加试次</button>
+          <button class="action-btn secondary" type="button" id="loadWorkbenchPreset">载入示例</button>
+          <button class="action-btn secondary" type="button" id="runWorkbench">运行测试</button>
+          <button class="action-btn secondary" type="button" id="exportWorkbench">导出配置 JSON</button>
+        </div>
+        <div class="workbench-grid">
+          <div class="workbench-table-wrap">
+            <table class="workbench-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>刺激类型</th>
+                  <th>内容 / 图片URL</th>
+                  <th>颜色</th>
+                  <th>时长ms</th>
+                  <th>正确键</th>
+                  <th>顺序</th>
+                </tr>
+              </thead>
+              <tbody id="workbenchRows"></tbody>
+            </table>
+          </div>
+          <aside>
+            <h3>流程预览</h3>
+            <div class="workbench-preview" id="workbenchPreview"></div>
+          </aside>
+        </div>
+      </section>
+    </section>
+
+    <section class="module-panel" data-panel="questionnaires">
+      <section class="method-lab">
+        <h2>心理学问卷量表库</h2>
+        <p class="description">按原始语境和中文语境整理常用心理学问卷。用于选题、开题和方法部分准备；正式研究仍需核对原始文献、中文修订文献、授权和计分规则。</p>
+        <section class="toolbar" aria-label="问卷筛选">
+          <label class="search">
+            <span aria-hidden="true">⌕</span>
+            <input id="questionnaireSearch" type="search" placeholder="搜索问卷、缩写、领域，例如 BDI、焦虑、人格、运动">
+          </label>
+          <select id="questionnaireDomain" aria-label="选择问卷领域">
+            <option value="全部">全部领域</option>
+          </select>
+          <div class="count" id="questionnaireCount">0 项</div>
+        </section>
+        <div class="cards" id="questionnaireCards"></div>
+      </section>
     </section>
 
     <section class="module-panel" data-panel="templates">
@@ -1200,6 +1646,32 @@
       </div>
       <div class="literature-tools" id="literatureTools"></div>
       <div class="literature-list" id="literatureResults"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="questionnaireModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="questionnaireTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="questionnaireTitle">量表内容</h2>
+          <p class="description" id="questionnaireSubtitle"></p>
+        </div>
+        <button class="close-btn" type="button" data-close-modal aria-label="关闭">×</button>
+      </div>
+      <div class="questionnaire-detail" id="questionnaireContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="workbenchModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="workbenchTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="workbenchTitle">自定义实验运行</h2>
+          <p class="description" id="workbenchSubtitle">按表格顺序呈现刺激，并记录反应键与反应时。</p>
+        </div>
+        <button class="close-btn" type="button" data-close-modal aria-label="关闭">×</button>
+      </div>
+      <div id="workbenchRunContent"></div>
     </div>
   </div>
 
@@ -2274,6 +2746,241 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
       }).join("");
     }
 
+    let workbenchTrials = [
+      { type: "fixation", content: "+", color: "#ffffff", duration: 500, key: "" },
+      { type: "text", content: "A", color: "#ffffff", duration: 1000, key: "f" },
+      { type: "blank", content: "", color: "#ffffff", duration: 500, key: "" }
+    ];
+    let workbenchRun = null;
+
+    function stimulusTypeLabel(type) {
+      return {
+        fixation: "注视点",
+        text: "文字",
+        colorText: "彩色文字",
+        arrow: "箭头",
+        image: "图片URL",
+        blank: "空屏"
+      }[type] || type;
+    }
+
+    function escapeAttribute(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+    }
+
+    function renderStimulusPreview(trial) {
+      if (trial.type === "blank") return "";
+      if (trial.type === "image") return `<img src="${trial.content}" alt="stimulus">`;
+      const color = trial.type === "colorText" || trial.type === "fixation" || trial.type === "text" || trial.type === "arrow" ? trial.color : "#fff";
+      return `<span style="color:${color}">${trial.content || stimulusTypeLabel(trial.type)}</span>`;
+    }
+
+    function renderWorkbench() {
+      const rows = document.querySelector("#workbenchRows");
+      if (!rows) return;
+      rows.innerHTML = workbenchTrials.map((trial, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>
+            <select data-wb-field="type" data-wb-index="${index}">
+              ${["fixation", "text", "colorText", "arrow", "image", "blank"].map(type => `<option value="${type}"${trial.type === type ? " selected" : ""}>${stimulusTypeLabel(type)}</option>`).join("")}
+            </select>
+          </td>
+          <td><input data-wb-field="content" data-wb-index="${index}" value="${escapeAttribute(trial.content)}" placeholder="如 +、红、←←→←← 或图片URL"></td>
+          <td><input data-wb-field="color" data-wb-index="${index}" type="color" value="${trial.color || "#ffffff"}"></td>
+          <td><input data-wb-field="duration" data-wb-index="${index}" type="number" min="100" step="100" value="${trial.duration}"></td>
+          <td><input data-wb-field="key" data-wb-index="${index}" value="${escapeAttribute(trial.key)}" placeholder="f / j / space"></td>
+          <td>
+            <button class="mini-btn" type="button" data-wb-action="up" data-wb-index="${index}">↑</button>
+            <button class="mini-btn" type="button" data-wb-action="down" data-wb-index="${index}">↓</button>
+            <button class="mini-btn" type="button" data-wb-action="delete" data-wb-index="${index}">×</button>
+          </td>
+        </tr>
+      `).join("");
+
+      rows.querySelectorAll("[data-wb-field]").forEach(input => input.addEventListener("change", updateWorkbenchField));
+      rows.querySelectorAll("[data-wb-action]").forEach(button => {
+        button.addEventListener("click", handleWorkbenchAction);
+      });
+      renderWorkbenchPreview();
+    }
+
+    function updateWorkbenchField(event) {
+      const index = Number(event.target.dataset.wbIndex);
+      const field = event.target.dataset.wbField;
+      const value = field === "duration" ? Number(event.target.value || 0) : event.target.value;
+      workbenchTrials[index][field] = value;
+      if (field === "type") {
+        const defaults = {
+          fixation: { content: "+", key: "" },
+          text: { content: "A", key: "f" },
+          colorText: { content: "红", key: "f" },
+          arrow: { content: "←←→←←", key: "arrowright" },
+          image: { content: "https://", key: "f" },
+          blank: { content: "", key: "" }
+        };
+        workbenchTrials[index] = { ...workbenchTrials[index], ...defaults[value] };
+      }
+      renderWorkbench();
+    }
+
+    function handleWorkbenchAction(event) {
+      const index = Number(event.target.dataset.wbIndex);
+      const action = event.target.dataset.wbAction;
+      if (action === "delete") {
+        workbenchTrials.splice(index, 1);
+      }
+      if (action === "up" && index > 0) {
+        [workbenchTrials[index - 1], workbenchTrials[index]] = [workbenchTrials[index], workbenchTrials[index - 1]];
+      }
+      if (action === "down" && index < workbenchTrials.length - 1) {
+        [workbenchTrials[index + 1], workbenchTrials[index]] = [workbenchTrials[index], workbenchTrials[index + 1]];
+      }
+      if (!workbenchTrials.length) {
+        workbenchTrials.push({ type: "fixation", content: "+", color: "#ffffff", duration: 500, key: "" });
+      }
+      renderWorkbench();
+    }
+
+    function renderWorkbenchPreview() {
+      const preview = document.querySelector("#workbenchPreview");
+      if (!preview) return;
+      preview.innerHTML = workbenchTrials.map((trial, index) => `
+        <div class="preview-trial">
+          <strong>${index + 1}. ${stimulusTypeLabel(trial.type)} · ${trial.duration} ms</strong>
+          <div class="stimulus-demo">${renderStimulusPreview(trial)}</div>
+          <span class="description">正确键：${trial.key || "不记录正确键"}</span>
+        </div>
+      `).join("");
+    }
+
+    function addWorkbenchTrial() {
+      workbenchTrials.push({ type: "text", content: "S", color: "#ffffff", duration: 1000, key: "f" });
+      renderWorkbench();
+    }
+
+    function loadWorkbenchPreset() {
+      workbenchTrials = [
+        { type: "fixation", content: "+", color: "#ffffff", duration: 500, key: "" },
+        { type: "arrow", content: "←←→←←", color: "#ffffff", duration: 1500, key: "arrowright" },
+        { type: "blank", content: "", color: "#ffffff", duration: 500, key: "" },
+        { type: "fixation", content: "+", color: "#ffffff", duration: 500, key: "" },
+        { type: "colorText", content: "红", color: "#18864b", duration: 1500, key: "j" }
+      ];
+      renderWorkbench();
+    }
+
+    function exportWorkbenchConfig() {
+      const payload = {
+        name: "custom-workbench-experiment",
+        created_at: new Date().toISOString(),
+        trials: workbenchTrials
+      };
+      downloadTextFile("自定义实验工作台配置.json", JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+    }
+
+    function runWorkbench() {
+      workbenchRun = {
+        index: -1,
+        data: [],
+        awaiting: false,
+        startTime: 0,
+        timeout: null
+      };
+      document.querySelector("#workbenchRunContent").innerHTML = `
+        <div class="runner-screen">
+          <div class="runner-panel">
+            <h3 class="runner-title">准备运行自定义实验</h3>
+            <p class="runner-copy">共 ${workbenchTrials.length} 个刺激。按表格顺序呈现；设置了正确键的试次会记录正确性。</p>
+            <button class="action-btn" type="button" id="beginWorkbenchRun">开始</button>
+          </div>
+        </div>
+      `;
+      showModal("#workbenchModal");
+      document.querySelector("#beginWorkbenchRun").addEventListener("click", nextWorkbenchTrial);
+    }
+
+    function nextWorkbenchTrial() {
+      clearTimeout(workbenchRun?.timeout);
+      workbenchRun.index += 1;
+      if (workbenchRun.index >= workbenchTrials.length) {
+        finishWorkbenchRun();
+        return;
+      }
+      const trial = workbenchTrials[workbenchRun.index];
+      workbenchRun.awaiting = !!trial.key;
+      workbenchRun.startTime = performance.now();
+      document.querySelector("#workbenchRunContent").innerHTML = `
+        <div class="runner-screen">
+          <div class="runner-panel">
+            <div class="runner-progress">自定义实验 · 试次 ${workbenchRun.index + 1}/${workbenchTrials.length}</div>
+            <div class="runner-stimulus">${renderStimulusPreview(trial)}</div>
+            <div class="runner-hint">${trial.key ? `请按 ${trial.key}` : "无需按键，等待下一项"}</div>
+          </div>
+        </div>
+      `;
+      workbenchRun.timeout = setTimeout(() => {
+        if (trial.key) recordWorkbenchResponse("timeout");
+        else {
+          workbenchRun.data.push(workbenchRow(trial, "none", "", true));
+          nextWorkbenchTrial();
+        }
+      }, Math.max(100, Number(trial.duration) || 500));
+    }
+
+    function workbenchRow(trial, responseKey, rt, correct) {
+      return {
+        trial_index: workbenchRun.index + 1,
+        type: trial.type,
+        content: trial.content,
+        duration_ms: trial.duration,
+        correct_key: trial.key,
+        response_key: responseKey,
+        rt_ms: rt,
+        correct
+      };
+    }
+
+    function recordWorkbenchResponse(key) {
+      if (!workbenchRun || !workbenchRun.awaiting) return;
+      clearTimeout(workbenchRun.timeout);
+      const trial = workbenchTrials[workbenchRun.index];
+      const normalized = key === " " ? "space" : key.toLowerCase();
+      const rt = Math.round(performance.now() - workbenchRun.startTime);
+      const correct = !trial.key || normalized === trial.key.toLowerCase();
+      workbenchRun.data.push(workbenchRow(trial, normalized, rt, correct));
+      workbenchRun.awaiting = false;
+      setTimeout(nextWorkbenchTrial, 250);
+    }
+
+    function finishWorkbenchRun() {
+      const rows = workbenchRun.data;
+      const valid = rows.filter(row => row.rt_ms !== "");
+      const accuracy = rows.length ? Math.round(rows.filter(row => row.correct).length / rows.length * 100) : 0;
+      const meanRt = valid.length ? Math.round(valid.reduce((sum, row) => sum + Number(row.rt_ms), 0) / valid.length) : "无";
+      document.querySelector("#workbenchRunContent").innerHTML = `
+        <div class="runner-screen">
+          <div class="runner-results">
+            <h3 class="runner-title">自定义实验完成</h3>
+            <p>正确率：${accuracy}%</p>
+            <p>平均反应时：${meanRt} ms</p>
+            <button class="action-btn" type="button" id="downloadWorkbenchCsv">导出 CSV</button>
+            <button class="action-btn secondary" type="button" id="rerunWorkbench">重新运行</button>
+          </div>
+        </div>
+      `;
+      document.querySelector("#downloadWorkbenchCsv").addEventListener("click", downloadWorkbenchCsv);
+      document.querySelector("#rerunWorkbench").addEventListener("click", runWorkbench);
+    }
+
+    function downloadWorkbenchCsv() {
+      const rows = workbenchRun?.data || [];
+      if (!rows.length) return;
+      const header = Object.keys(rows[0]).join(",");
+      const body = rows.map(row => Object.values(row).map(value => `"${String(value).replaceAll('"', '""')}"`).join(",")).join("\n");
+      downloadTextFile("自定义实验工作台数据.csv", `${header}\n${body}`, "text/csv;charset=utf-8");
+    }
+
     function openRunner(index) {
       const task = tasks[index];
       const type = runnerType(task);
@@ -2616,6 +3323,635 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
         || Number(a.trial_index) - Number(b.trial_index);
     }
 
+    const questionnaireRows = `
+Beck Depression Inventory-II|BDI-II|临床与健康心理|原始语境：评估过去两周抑郁症状严重程度，常用于临床筛查、治疗前后变化和抑郁研究。|中文语境：常见译名为贝克抑郁量表第二版；使用时需核对中文授权、版本和临界值。|注意版权授权；报告版本、题项数、计分范围和临界标准。
+Beck Anxiety Inventory|BAI|临床与健康心理|原始语境：评估焦虑相关躯体和认知症状，常用于临床和健康心理研究。|中文语境：常见译名为贝克焦虑量表；适用于焦虑症状筛查但不等同诊断。|注意区分焦虑与躯体疾病症状；报告中文版本来源。
+State-Trait Anxiety Inventory|STAI|情绪与压力|原始语境：区分状态焦虑和特质焦虑，常用于压力、考试、运动竞赛和实验诱发情绪研究。|中文语境：常见译名为状态-特质焦虑问卷；在学生、运动员和临床样本中使用较多。|分清 S-AI 与 T-AI；报告测量时点。
+Self-Rating Depression Scale|SDS|临床与健康心理|原始语境：Zung 自评抑郁量表，用于抑郁症状自评筛查。|中文语境：国内临床和学校心理筛查常见，但需避免单独作为诊断依据。|说明标准分转换方式和临界值来源。
+Self-Rating Anxiety Scale|SAS|临床与健康心理|原始语境：Zung 自评焦虑量表，用于焦虑症状自评。|中文语境：常用于健康、护理、学校和临床筛查。|报告原始分/标准分；注意躯体症状混淆。
+Patient Health Questionnaire-9|PHQ-9|临床与健康心理|原始语境：基于 DSM 抑郁症状的 9 项筛查工具，常用于初级医疗和流行病学。|中文语境：PHQ-9 中文版使用广泛，适合快速筛查和随访。|报告时间窗、临界值和是否包含自杀风险条目处理。
+Generalized Anxiety Disorder-7|GAD-7|临床与健康心理|原始语境：广泛性焦虑症状 7 项筛查工具。|中文语境：GAD-7 中文版常与 PHQ-9 配套用于学校、医疗和线上调查。|报告临界值；不可替代临床访谈。
+Depression Anxiety Stress Scales-21|DASS-21|情绪与压力|原始语境：同时评估抑郁、焦虑和压力三个维度。|中文语境：常见译名为抑郁-焦虑-压力量表简版；适合非临床人群压力研究。|报告 21 项是否乘以 2 转换到 DASS-42。
+Perceived Stress Scale|PSS|情绪与压力|原始语境：评估个体感知生活不可控和压力负荷。|中文语境：常用于大学生、医护、职场和运动压力研究。|常见 PSS-10；报告时间窗和中文版本。
+Positive and Negative Affect Schedule|PANAS|情绪与压力|原始语境：测量积极情绪和消极情绪两个维度。|中文语境：常用于实验前后情绪操纵检查、日记研究和心理健康研究。|说明是状态版还是特质版。
+Rosenberg Self-Esteem Scale|RSES|人格与自我|原始语境：测量总体自尊水平。|中文语境：常见译名为罗森伯格自尊量表；学生和青少年研究中使用广泛。|注意反向题处理和单维/双维争议。
+General Self-Efficacy Scale|GSES|人格与自我|原始语境：评估个体面对困难时的一般自我效能感。|中文语境：常用于教育、健康行为、运动坚持和职业心理。|报告中文修订来源和评分范围。
+Big Five Inventory|BFI|人格与自我|原始语境：测量大五人格：开放性、尽责性、外向性、宜人性、神经质。|中文语境：BFI、BFI-2 和简版均有使用；需明确版本。|报告版本、维度、题项数。
+NEO Personality Inventory-Revised|NEO-PI-R|人格与自我|原始语境：大五人格及更细分 facets 的经典人格测验。|中文语境：多用于人格结构和临床/组织研究；通常涉及授权。|注意版权；不建议随意复制完整题项。
+Eysenck Personality Questionnaire|EPQ|人格与自我|原始语境：测量精神质、外向性、神经质和掩饰性。|中文语境：EPQ 中文版和简式版本常见于人格与临床研究。|报告成人版/儿童版和常模来源。
+Barratt Impulsiveness Scale-11|BIS-11|人格与自我|原始语境：评估冲动性，包括注意、运动和非计划冲动。|中文语境：常用于成瘾、风险决策、青少年和临床研究。|报告维度结构和中文修订来源。
+UPPS-P Impulsive Behavior Scale|UPPS-P|人格与自我|原始语境：从负/正紧迫感、缺乏预谋、缺乏坚持、感觉寻求评估冲动。|中文语境：用于成瘾、冒险行为和情绪冲动研究。|建议说明短版或完整版。
+Sensation Seeking Scale|SSS|人格与自我|原始语境：评估寻求新奇、刺激和冒险倾向。|中文语境：常用于运动、驾驶、风险行为和青少年研究。|注意版本差异和文化适配。
+Emotion Regulation Questionnaire|ERQ|情绪与压力|原始语境：测量认知重评和表达抑制两类情绪调节策略。|中文语境：常用于情绪调节、心理健康和实验情绪研究。|报告两个维度得分，不建议合成总分。
+Difficulties in Emotion Regulation Scale|DERS|情绪与压力|原始语境：评估情绪调节困难的多个方面。|中文语境：常用于临床、创伤、青少年和情绪障碍研究。|说明是完整版还是短版。
+Toronto Alexithymia Scale-20|TAS-20|情绪与压力|原始语境：测量述情障碍，包括识别和描述情绪困难、外向性思维。|中文语境：常用于心身医学、临床和情绪加工研究。|报告三因子结构适配情况。
+Interpersonal Reactivity Index|IRI|社会心理|原始语境：测量共情的认知和情绪成分，如观点采择、共情关怀。|中文语境：常用于社会认知、亲社会行为和临床群体。|分维度报告；避免仅使用总分。
+UCLA Loneliness Scale|UCLA-LS|社会心理|原始语境：评估主观孤独感和社会联结不足。|中文语境：常用于大学生、老年人、网络使用和心理健康研究。|说明版本：20 项、短版或第三版。
+Social Support Rating Scale|SSRS|社会心理|原始语境：中文社会支持评定量表，评估客观支持、主观支持和利用度。|中文语境：本土量表，常用于临床、护理、学生和健康心理。|报告本土开发背景和维度。
+Multidimensional Scale of Perceived Social Support|MSPSS|社会心理|原始语境：评估来自家庭、朋友和重要他人的感知社会支持。|中文语境：常用于学生、患者和压力缓冲研究。|适合跨文化研究；报告三维度。
+Satisfaction With Life Scale|SWLS|幸福感与生活质量|原始语境：测量总体生活满意度。|中文语境：常用于主观幸福感、积极心理和教育研究。|通常 5 项；报告 Likert 范围。
+Subjective Happiness Scale|SHS|幸福感与生活质量|原始语境：简短测量个体主观幸福感。|中文语境：适合快速调查和积极心理干预研究。|报告中文修订和信度。
+Ryff Psychological Well-Being Scales|PWB|幸福感与生活质量|原始语境：评估自主性、环境掌控、个人成长、积极关系、生活目标和自我接纳。|中文语境：用于积极心理、老年心理和教育研究。|版本较多；需说明长版/短版。
+Pittsburgh Sleep Quality Index|PSQI|健康与睡眠|原始语境：评估过去一个月睡眠质量及多个睡眠成分。|中文语境：常用于大学生、医护、运动员和临床睡眠研究。|报告总分临界值和成分计分。
+Insomnia Severity Index|ISI|健康与睡眠|原始语境：评估失眠严重程度及其影响。|中文语境：临床和社区睡眠研究常用。|说明时间窗和临界值。
+Epworth Sleepiness Scale|ESS|健康与睡眠|原始语境：评估日间嗜睡倾向。|中文语境：睡眠医学、驾驶安全和疲劳研究常用。|注意与睡眠质量量表区分。
+International Physical Activity Questionnaire|IPAQ|健康与运动|原始语境：评估身体活动水平，有短版和长版。|中文语境：运动健康、公共卫生和学生体力活动研究常用。|报告 MET-min/week 计算方式。
+Exercise Motivation Inventory-2|EMI-2|运动心理|原始语境：评估参与运动的多种动机，如健康、外貌、社交、挑战等。|中文语境：用于运动参与、健身动机和健康行为研究。|注意维度较多，报告所用版本。
+Sport Motivation Scale-II|SMS-II|运动心理|原始语境：基于自我决定理论测量运动动机类型。|中文语境：常用于运动员、学生体育和锻炼坚持研究。|区分内在动机、外在动机和无动机。
+Competitive State Anxiety Inventory-2|CSAI-2|运动心理|原始语境：测量竞赛状态焦虑，包括认知焦虑、躯体焦虑和自信。|中文语境：运动竞赛压力和赛前心理状态研究常用。|报告赛前测量时间点。
+Athletic Coping Skills Inventory-28|ACSI-28|运动心理|原始语境：评估运动员心理应对技能。|中文语境：用于运动员心理技能、训练干预和竞技表现研究。|注意授权和运动项目差异。
+Sport Confidence Inventory|SCI|运动心理|原始语境：评估运动情境下的自信。|中文语境：常用于竞赛心理、运动表现和心理训练研究。|报告具体版本和维度。
+Flow State Scale|FSS|运动心理|原始语境：评估活动中的心流体验。|中文语境：常用于运动、艺术、学习和游戏情境。|区分状态版和特质版。
+Mindful Attention Awareness Scale|MAAS|正念与意识|原始语境：测量日常生活中的正念觉察水平。|中文语境：常用于正念训练、情绪调节和心理健康研究。|通常为单维度；注意反向题。
+Five Facet Mindfulness Questionnaire|FFMQ|正念与意识|原始语境：评估观察、描述、觉知行动、不判断、不反应五个正念维度。|中文语境：临床正念和大学生心理研究常用。|报告五维度，注意冥想经验差异。
+Connor-Davidson Resilience Scale|CD-RISC|韧性与适应|原始语境：测量心理韧性和压力适应能力。|中文语境：常用于灾后、临床、学生、医护和运动员研究。|版本有 25 项、10 项等。
+Brief Resilience Scale|BRS|韧性与适应|原始语境：强调从压力中恢复的能力。|中文语境：适合简短调查和健康心理研究。|与 CD-RISC 概念略不同。
+Maslach Burnout Inventory|MBI|组织与职业|原始语境：测量职业倦怠，包括情绪耗竭、去人格化和个人成就感。|中文语境：医护、教师、企业和学生职业倦怠研究常见。|版权严格，需注意授权。
+Job Satisfaction Survey|JSS|组织与职业|原始语境：评估工作满意度多个方面。|中文语境：组织心理、教师、医护和企业员工研究常用。|报告维度和总分使用方式。
+Utrecht Work Engagement Scale|UWES|组织与职业|原始语境：测量工作投入，包括活力、奉献和专注。|中文语境：组织心理、教育和医护研究常见。|常用 17 项、9 项短版。
+Psychological Capital Questionnaire|PCQ|组织与职业|原始语境：测量希望、效能、韧性和乐观。|中文语境：组织行为和教育管理研究中常见。|多为授权量表，注意使用许可。
+Need for Cognition Scale|NFC|认知与学习|原始语境：测量个体享受和投入认知活动的倾向。|中文语境：常用于学习、说服、决策和信息加工研究。|有完整版和短版。
+Academic Motivation Scale|AMS|教育心理|原始语境：基于自我决定理论测量学业动机。|中文语境：常用于大学生、中学生和学习投入研究。|报告文化适配和维度。
+Learning and Study Strategies Inventory|LASSI|教育心理|原始语境：评估学习策略、态度、时间管理和考试策略。|中文语境：学习策略和教育干预研究可参考。|注意版权和版本。
+Motivated Strategies for Learning Questionnaire|MSLQ|教育心理|原始语境：测量学习动机和学习策略。|中文语境：在线学习、大学生学习和课堂研究常用。|报告所选分量表，不一定全量表使用。
+Test Anxiety Inventory|TAI|教育心理|原始语境：测量考试焦虑，包括担忧和情绪性。|中文语境：学生考试压力、学业表现和干预研究常见。|区分状态考试焦虑和特质考试焦虑。
+Parenting Styles and Dimensions Questionnaire|PSDQ|发展与家庭|原始语境：评估权威、专制、放任等教养方式。|中文语境：家庭教养、儿童发展和青少年适应研究常用。|父母报告和儿童报告需区分。
+Strengths and Difficulties Questionnaire|SDQ|发展与临床儿童|原始语境：儿童青少年心理行为筛查，包括情绪、品行、多动、同伴和亲社会。|中文语境：学校、社区和临床儿童筛查常用。|有家长版、教师版、自评版。
+Child Behavior Checklist|CBCL|发展与临床儿童|原始语境：Achenbach 系统中的儿童行为问题评估。|中文语境：儿童临床、学校心理和发展研究常见。|版权和常模要求较高。
+Autism Spectrum Quotient|AQ|发展与临床儿童|原始语境：评估自闭谱系特质量。|中文语境：成人和青少年自闭特质筛查研究常用。|筛查不等于诊断；注意版本。
+Empathy Quotient|EQ|社会心理|原始语境：评估共情能力，常与自闭特质研究相关。|中文语境：社会认知、临床和教育研究常用。|报告版本和计分方式。
+Systemizing Quotient|SQ|社会认知|原始语境：评估系统化倾向。|中文语境：常与 AQ、EQ 搭配研究认知风格。|注意文化适配。
+PCL-5 PTSD Checklist for DSM-5|PCL-5|创伤与临床|原始语境：评估 DSM-5 PTSD 症状。|中文语境：创伤、灾害、医护和临床研究常用。|需明确创伤事件锚定方式。
+Impact of Event Scale-Revised|IES-R|创伤与临床|原始语境：评估创伤事件后的侵入、回避和高唤醒。|中文语境：灾后心理、公共卫生和临床创伤研究常见。|需说明目标事件。
+Obsessive-Compulsive Inventory-Revised|OCI-R|临床与健康心理|原始语境：评估强迫症状多个维度。|中文语境：临床和非临床强迫特质研究常用。|筛查工具，不替代诊断。
+Alcohol Use Disorders Identification Test|AUDIT|成瘾与健康|原始语境：WHO 开发的酒精使用问题筛查量表。|中文语境：公共卫生、临床和大学生饮酒研究常用。|报告临界值和文化适配。
+Fagerstrom Test for Nicotine Dependence|FTND|成瘾与健康|原始语境：评估尼古丁依赖程度。|中文语境：吸烟、戒烟和健康行为研究常见。|适合吸烟者样本。
+Internet Addiction Test|IAT|成瘾与健康|原始语境：Young 网络成瘾测验，评估问题性网络使用。|中文语境：大学生、青少年和数字健康研究常见。|概念和临界值存在争议，需谨慎表述。
+Smartphone Addiction Scale|SAS-SV|成瘾与健康|原始语境：评估智能手机成瘾倾向，短版常用于筛查。|中文语境：学生和青少年数字行为研究常见。|建议使用“问题性手机使用”等谨慎术语。
+Eating Disorder Examination Questionnaire|EDE-Q|饮食与身体意象|原始语境：评估进食障碍相关态度和行为。|中文语境：临床、大学生和身体意象研究常见。|敏感问题需伦理说明。
+Body Shape Questionnaire|BSQ|饮食与身体意象|原始语境：评估对体型和肥胖的担忧。|中文语境：身体意象、进食行为和青少年研究常用。|报告版本长度。
+Multidimensional Body-Self Relations Questionnaire|MBSRQ|饮食与身体意象|原始语境：评估身体自我关系和身体形象多个维度。|中文语境：身体意象、运动、健康和美容心理研究可用。|维度较多，需明确所用分量表。
+Symptom Checklist-90-Revised|SCL-90-R|临床与健康心理|原始语境：广泛评估多维心理症状，如躯体化、强迫、人际敏感、抑郁和焦虑。|中文语境：SCL-90 在学校、临床和职业健康筛查中很常见，但常模和解释需谨慎。|报告版本、因子得分和常模来源；避免把筛查结果写成诊断。
+General Health Questionnaire-12|GHQ-12|临床与健康心理|原始语境：快速筛查一般心理健康和近期心理困扰。|中文语境：常用于流行病学、医护、学生和职业群体。|说明计分方式，如 0-0-1-1 或 Likert。
+WHO-5 Well-Being Index|WHO-5|幸福感与生活质量|原始语境：WHO 推荐的简短主观幸福感筛查工具。|中文语境：适合大型问卷、心理健康筛查和干预前后评估。|报告分数转换和临界值。
+Kessler Psychological Distress Scale|K10|临床与健康心理|原始语境：评估非特异性心理困扰。|中文语境：常用于社区、公共卫生和学生心理健康研究。|说明时间窗和临界标准。
+Hospital Anxiety and Depression Scale|HADS|临床与健康心理|原始语境：面向医院和躯体疾病人群评估焦虑与抑郁，减少躯体症状干扰。|中文语境：常用于患者、康复和护理研究。|分别报告 HADS-A 和 HADS-D。
+Center for Epidemiologic Studies Depression Scale|CES-D|临床与健康心理|原始语境：评估一般人群抑郁症状，常用于流行病学研究。|中文语境：大学生、老年人和社区样本中使用广泛。|报告版本和临界值来源。
+Adult ADHD Self-Report Scale|ASRS|临床与健康心理|原始语境：成人 ADHD 症状自评筛查。|中文语境：成人注意缺陷、学习困难和职业适应研究可用。|筛查不等同诊断；需说明版本。
+BIS/BAS Scales|BIS/BAS|人格与自我|原始语境：基于强化敏感性理论测量行为抑制与行为激活系统。|中文语境：常用于奖赏敏感性、情绪、成瘾和决策研究。|分别报告 BIS、BAS Drive、Fun Seeking、Reward Responsiveness。
+HEXACO Personality Inventory-Revised|HEXACO-PI-R|人格与自我|原始语境：六因素人格模型，包括诚实-谦逊、情绪性、外向性、宜人性、尽责性和开放性。|中文语境：人格、组织行为和道德心理研究中逐渐增多。|说明 60 项、100 项或 200 项版本。
+Short Dark Triad|SD3|人格与自我|原始语境：评估马基雅维利主义、自恋和精神病态三类黑暗人格。|中文语境：常用于组织、网络行为、欺骗和攻击性研究。|敏感结构需注意伦理说明和匿名性。
+Narcissistic Personality Inventory|NPI|人格与自我|原始语境：测量非临床自恋特质。|中文语境：人格、自尊、社交媒体和领导研究常用。|说明强迫选择版或 Likert 版本。
+Machiavellianism Scale|Mach-IV|人格与自我|原始语境：评估操纵性、犬儒信念和策略性人际取向。|中文语境：组织行为、社会心理和黑暗人格研究常见。|报告维度或总分依据。
+Aggression Questionnaire|BPAQ|社会心理|原始语境：测量身体攻击、言语攻击、愤怒和敌意。|中文语境：青少年、运动冲突、网络攻击和临床样本中常用。|注意敏感行为题项和匿名保护。
+Moral Foundations Questionnaire|MFQ|社会心理|原始语境：评估关怀、公平、忠诚、权威和纯洁等道德基础。|中文语境：政治心理、文化心理和道德判断研究可用。|跨文化解释需谨慎，报告版本。
+Social Connectedness Scale-Revised|SCS-R|社会心理|原始语境：评估个体与社会环境的联结感。|中文语境：孤独、心理健康、网络使用和校园适应研究常见。|与社会支持量表区分概念。
+Prosocial Tendencies Measure|PTM|社会心理|原始语境：评估公开、匿名、利他、情绪性、紧急和依从性亲社会倾向。|中文语境：青少年、大学生和道德教育研究常用。|分维度报告更合适。
+Trust Scale|TS|社会心理|原始语境：测量人际信任或一般信任倾向。|中文语境：社会资本、合作、组织和网络行为研究常用。|需说明采用 Rotter 量表或具体修订版本。
+Cognitive Failures Questionnaire|CFQ|认知与学习|原始语境：评估日常注意、记忆和动作失误。|中文语境：注意控制、疲劳、睡眠和职业安全研究可用。|说明是特质自评，不能替代客观认知任务。
+Metacognitive Awareness Inventory|MAI|认知与学习|原始语境：评估元认知知识和元认知调节。|中文语境：教育心理、自主学习和在线学习研究常用。|报告分维度结构。
+Need for Closure Scale|NFCS|认知与学习|原始语境：测量个体对确定性和快速结论的需求。|中文语境：决策、偏见、信息加工和社会认知研究可用。|区分需求闭合与认知需求。
+Cognitive Reflection Test|CRT|决策与奖赏|原始语境：评估抑制直觉反应并进行反思推理的倾向。|中文语境：常用于决策、风险偏好和理性思维研究。|题目可能被熟悉；报告版本和是否新增题。
+Melbourne Decision Making Questionnaire|MDMQ|决策与奖赏|原始语境：评估警觉、逃避、拖延和恐慌等决策方式。|中文语境：决策风格、职业选择和健康决策研究可参考。|注意版本来源和维度解释。
+Maximization Scale|MS|决策与奖赏|原始语境：测量最大化倾向与满意化倾向。|中文语境：消费、职业决策、幸福感和选择困难研究常用。|说明 Schwartz 版或后续修订版。
+Domain-Specific Risk-Taking Scale|DOSPERT|决策与奖赏|原始语境：按伦理、金融、健康安全、娱乐和社会领域测量风险态度。|中文语境：风险决策、运动冒险、驾驶和健康行为研究常用。|区分风险知觉、预期收益和冒险倾向。
+Grit Scale-Short|Grit-S|教育心理|原始语境：测量坚持努力和兴趣一致性。|中文语境：学业成就、运动训练和职业发展研究常见。|报告两维结构争议和版本。
+Growth Mindset Scale|GMS|教育心理|原始语境：测量智力或能力可塑性信念。|中文语境：教育干预、学习动机和课堂研究常用。|说明测量对象是智力、运动能力还是一般能力。
+Academic Self-Efficacy Scale|ASES|教育心理|原始语境：评估完成学习任务和应对学业挑战的信心。|中文语境：学生学习投入、成绩和在线学习研究常用。|不同版本很多，需报告具体来源。
+School Burnout Inventory|SBI|教育心理|原始语境：评估学生学习倦怠，包括耗竭、犬儒和低效能感。|中文语境：中学生、大学生和研究生压力研究常用。|与职业倦怠量表区分。
+Classroom Environment Scale|CES|教育心理|原始语境：评估课堂关系、组织和学习气氛。|中文语境：课堂教学、学习动机和教育评价研究可用。|报告学生版或教师版。
+Task and Ego Orientation in Sport Questionnaire|TEOSQ|运动心理|原始语境：测量运动情境中的任务取向和自我取向。|中文语境：竞技体育、体育课和运动动机研究常用。|报告目标取向维度得分。
+Athletic Identity Measurement Scale|AIMS|运动心理|原始语境：评估个体把运动员身份作为自我概念核心的程度。|中文语境：运动员生涯、退役适应和运动损伤研究常见。|说明样本竞技水平和项目。
+Coach-Athlete Relationship Questionnaire|CART-Q|运动心理|原始语境：评估教练-运动员关系中的亲密、承诺和互补。|中文语境：运动团队、训练氛围和运动表现研究常用。|可区分直接视角和元视角版本。
+Physical Self-Description Questionnaire|PSDQ-Physical|运动心理|原始语境：评估身体自我概念，如力量、耐力、灵活性、外貌等。|中文语境：体育教育、健身、身体意象和青少年运动研究常用。|避免与教养方式 PSDQ 缩写混淆。
+Exercise Self-Efficacy Scale|ESES|运动心理|原始语境：评估坚持锻炼和克服障碍的自我效能。|中文语境：运动干预、慢病管理和健身坚持研究常用。|报告具体锻炼情境和时间窗。
+Exercise Dependence Scale-Revised|EDS-R|运动心理|原始语境：评估运动依赖相关症状。|中文语境：健身、耐力运动和运动成瘾倾向研究可用。|敏感表述建议用“运动依赖倾向”。
+SF-36 Health Survey|SF-36|健康与睡眠|原始语境：评估健康相关生活质量的 8 个维度。|中文语境：临床、康复、公共卫生和运动健康研究常用。|报告量表授权、维度转换和总分方式。
+WHOQOL-BREF|WHOQOL-BREF|幸福感与生活质量|原始语境：WHO 生活质量简表，覆盖生理、心理、社会关系和环境。|中文语境：患者、社区、老年和跨文化研究常用。|报告领域分转换方法。
+Health Anxiety Inventory|HAI|临床与健康心理|原始语境：评估健康焦虑和疑病相关担忧。|中文语境：医学心理、网络健康信息搜索和焦虑研究可用。|说明短版或完整版。
+Pain Catastrophizing Scale|PCS|健康与睡眠|原始语境：评估疼痛灾难化，包括反刍、放大和无助。|中文语境：慢性疼痛、运动损伤和康复心理研究常用。|与实际疼痛强度分开报告。
+Fatigue Severity Scale|FSS-Fatigue|健康与睡眠|原始语境：评估疲劳对日常功能的影响。|中文语境：慢病、睡眠、医护和运动恢复研究常用。|避免与 Flow State Scale 的 FSS 缩写混淆。
+Morningness-Eveningness Questionnaire|MEQ|健康与睡眠|原始语境：评估晨型-夜型作息偏好。|中文语境：睡眠、学习效率、运动训练和认知表现研究常用。|报告版本和分类阈值。
+Munich Chronotype Questionnaire|MCTQ|健康与睡眠|原始语境：基于工作日和自由日睡眠时间估计生物钟类型。|中文语境：大学生、轮班、睡眠健康和运动表现研究可用。|说明是否计算社会时差。
+Childhood Trauma Questionnaire|CTQ|创伤与临床|原始语境：回顾性评估童年期情感、躯体、性虐待和忽视。|中文语境：创伤、依恋、人格和临床研究常用。|高度敏感，需伦理支持和危机处理说明。
+Adverse Childhood Experiences Questionnaire|ACE|创伤与临床|原始语境：评估童年逆境经历及其累积风险。|中文语境：公共卫生、心理健康和发展精神病理研究常见。|报告题项版本和风险分组方式。
+Parental Bonding Instrument|PBI|发展与家庭|原始语境：评估父母关爱和控制/保护。|中文语境：依恋、家庭环境、临床和大学生心理研究常用。|区分父亲版与母亲版评分。
+Inventory of Parent and Peer Attachment|IPPA|发展与家庭|原始语境：评估青少年与父母、同伴的依恋质量。|中文语境：青少年适应、亲子关系和校园心理研究常用。|报告父母/同伴分量表。
+`.trim();
+
+    const questionnaires = questionnaireRows.split("\n").map(row => {
+      const [original, abbr, domain, originalContext, chineseContext, note] = row.split("|");
+      return { original, abbr, domain, originalContext, chineseContext, note };
+    });
+
+    const questionnaireProfileOverrides = {
+      "BDI-II": {
+        items: "21 项",
+        response: "0-3 分等级反应；通常以过去两周为时间窗",
+        dimensions: ["抑郁情绪与认知症状", "躯体/睡眠/食欲等伴随症状", "总分用于严重程度分层"],
+        scoring: "各题相加得到总分；论文中需报告版本、授权、临界值来源和中文修订来源。"
+      },
+      "BAI": {
+        items: "21 项",
+        response: "0-3 分等级反应；聚焦近期焦虑症状强度",
+        dimensions: ["焦虑相关躯体唤醒", "主观紧张与恐惧", "总分反映焦虑症状严重程度"],
+        scoring: "各题相加得到总分；适合筛查和组间比较，不替代临床诊断。"
+      },
+      "STAI": {
+        items: "40 项，常分为状态焦虑 20 项和特质焦虑 20 项",
+        response: "4 点等级反应；状态版按当下感受，特质版按平时倾向",
+        dimensions: ["状态焦虑 S-AI", "特质焦虑 T-AI"],
+        scoring: "分别计算两个分量表；报告测量时间点，例如赛前、操纵后或实验前基线。"
+      },
+      "PHQ-9": {
+        items: "9 项",
+        response: "0-3 分频率反应；通常评估过去两周",
+        dimensions: ["DSM 抑郁核心症状", "功能损害补充说明常作为附加问题"],
+        scoring: "9 项总分用于筛查和严重程度分层；需说明自杀风险条目的处理流程。"
+      },
+      "GAD-7": {
+        items: "7 项",
+        response: "0-3 分频率反应；通常评估过去两周",
+        dimensions: ["广泛性焦虑核心症状", "担忧、紧张、放松困难和易激惹等表现"],
+        scoring: "7 项总分用于焦虑症状筛查；报告临界值和中文版本。"
+      },
+      "DASS-21": {
+        items: "21 项，三个分量表各 7 项",
+        response: "0-3 分等级反应；通常评估最近一周",
+        dimensions: ["抑郁", "焦虑", "压力"],
+        scoring: "分别计算三个分量表；很多研究会乘以 2 以对应 DASS-42 指标。"
+      },
+      "PSS": {
+        items: "常用 PSS-10，也有 4 项和 14 项版本",
+        response: "5 点频率反应；评估近期压力知觉",
+        dimensions: ["不可控感", "压力负荷", "应对信心反向条目"],
+        scoring: "反向题转换后求和；报告所用版本和时间窗。"
+      },
+      "PANAS": {
+        items: "常用 20 项，积极情绪 10 项、消极情绪 10 项",
+        response: "5 点等级反应；时间窗可设为此刻、今天、过去几周或一般而言",
+        dimensions: ["Positive Affect 积极情绪", "Negative Affect 消极情绪"],
+        scoring: "两个维度分别求和或均分；需说明状态版还是特质版。"
+      },
+      "RSES": {
+        items: "10 项",
+        response: "4 点同意度反应",
+        dimensions: ["总体自尊", "部分研究区分正向自尊与负向自尊"],
+        scoring: "反向题转换后求和或均分；报告中文版本和维度处理方式。"
+      },
+      "GSES": {
+        items: "10 项",
+        response: "4 点同意度反应",
+        dimensions: ["一般自我效能感"],
+        scoring: "通常求总分；适用于学习、健康行为、运动坚持等预测模型。"
+      },
+      "BFI": {
+        items: "常见 44 项；BFI-2 和短版题项数不同",
+        response: "5 点同意度反应",
+        dimensions: ["开放性", "尽责性", "外向性", "宜人性", "神经质"],
+        scoring: "按五个维度分别计分；需明确 BFI、BFI-2 或简版。"
+      },
+      "BIS-11": {
+        items: "30 项左右，版本可能不同",
+        response: "4 点频率/符合程度反应",
+        dimensions: ["注意冲动", "运动冲动", "非计划冲动"],
+        scoring: "可报告总分和分维度；中文结构在不同样本中可能有差异。"
+      },
+      "ERQ": {
+        items: "10 项",
+        response: "7 点同意度反应",
+        dimensions: ["认知重评", "表达抑制"],
+        scoring: "两个维度分开求均分；不建议简单合成总分。"
+      },
+      "TAS-20": {
+        items: "20 项",
+        response: "5 点同意度反应",
+        dimensions: ["情绪识别困难", "情绪描述困难", "外向性思维"],
+        scoring: "可报告总分和三维度；注意述情障碍临界值来源。"
+      },
+      "IRI": {
+        items: "28 项",
+        response: "5 点符合程度反应",
+        dimensions: ["观点采择", "想象", "共情关怀", "个人痛苦"],
+        scoring: "四个分量表分别报告；不宜只写一个总分。"
+      },
+      "MSPSS": {
+        items: "12 项",
+        response: "常用 7 点同意度反应",
+        dimensions: ["家庭支持", "朋友支持", "重要他人支持"],
+        scoring: "可计算总分和三维度均分；适合压力缓冲模型。"
+      },
+      "SWLS": {
+        items: "5 项",
+        response: "通常 7 点同意度反应",
+        dimensions: ["生活满意度单维结构"],
+        scoring: "求和或均分；报告 Likert 范围。"
+      },
+      "PSQI": {
+        items: "19 个自评条目组成 7 个成分",
+        response: "频率、时间和主观评价混合题型；评估过去一个月",
+        dimensions: ["主观睡眠质量", "入睡时间", "睡眠时长", "睡眠效率", "睡眠障碍", "催眠药物", "日间功能"],
+        scoring: "7 个成分各 0-3 分，总分 0-21；报告临界值。"
+      },
+      "IPAQ": {
+        items: "短版和长版不同；记录步行、中等强度和高强度活动",
+        response: "过去 7 天频率与持续时间",
+        dimensions: ["步行", "中等强度活动", "高强度活动", "久坐时间"],
+        scoring: "换算 MET-min/week；说明清洗规则和分组标准。"
+      },
+      "CSAI-2": {
+        items: "常见 27 项；修订版题项数可能不同",
+        response: "4 点等级反应；通常在赛前测量",
+        dimensions: ["认知焦虑", "躯体焦虑", "状态自信"],
+        scoring: "三个维度分别计分；报告距比赛开始的测量时间。"
+      },
+      "MAAS": {
+        items: "15 项",
+        response: "6 点频率反应",
+        dimensions: ["日常正念觉察单维结构"],
+        scoring: "通常反向后求均分；高分表示更高正念觉察。"
+      },
+      "FFMQ": {
+        items: "常见 39 项，也有短版",
+        response: "5 点等级反应",
+        dimensions: ["观察", "描述", "觉知行动", "不判断", "不反应"],
+        scoring: "五维度分别计分；注意冥想经验对结构的影响。"
+      },
+      "CD-RISC": {
+        items: "常见 25 项，也有 10 项短版",
+        response: "5 点等级反应",
+        dimensions: ["坚韧性", "力量", "乐观或适应资源"],
+        scoring: "按版本计算总分或维度分；报告中文修订版本。"
+      },
+      "MBI": {
+        items: "版本很多，常见职业版 22 项",
+        response: "频率等级反应",
+        dimensions: ["情绪耗竭", "去人格化/玩世不恭", "个人成就感或职业效能"],
+        scoring: "通常分维度报告；版权严格，公开网站不应直接放完整题项。"
+      },
+      "MSLQ": {
+        items: "完整版 81 项，也常选用部分分量表",
+        response: "7 点同意度反应",
+        dimensions: ["学习动机", "认知策略", "元认知策略", "资源管理"],
+        scoring: "按所选分量表计算；论文中需列明使用了哪些子量表。"
+      },
+      "SDQ": {
+        items: "25 项",
+        response: "3 点反应；有家长、教师和自评版本",
+        dimensions: ["情绪症状", "品行问题", "多动/注意问题", "同伴问题", "亲社会行为"],
+        scoring: "可计算困难总分和五个分量表；需区分报告者版本。"
+      },
+      "PCL-5": {
+        items: "20 项",
+        response: "0-4 分困扰程度；通常锚定特定创伤事件",
+        dimensions: ["侵入", "回避", "认知和心境负性改变", "高警觉"],
+        scoring: "总分和症状簇均可报告；需说明目标创伤事件。"
+      },
+      "AUDIT": {
+        items: "10 项",
+        response: "频率、数量和后果相关题型",
+        dimensions: ["危险饮酒", "依赖症状", "有害饮酒后果"],
+        scoring: "总分用于酒精使用风险筛查；报告临界值。"
+      },
+      "IAT": {
+        items: "20 项",
+        response: "5 点频率反应",
+        dimensions: ["网络使用失控", "时间管理问题", "社交/功能影响"],
+        scoring: "总分反映问题性网络使用程度；临界值存在争议。"
+      }
+    };
+
+    const questionnairePreviewOverrides = {
+      "BDI-II": ["兴趣或愉快感下降的程度", "对失败、自责或负性自我评价的体验", "睡眠、食欲或精力变化", "注意自杀相关风险条目的伦理处理"],
+      "BAI": ["心跳、出汗、发抖等生理唤醒", "害怕失控或紧张不安", "身体不适带来的焦虑感", "近期焦虑症状强度"],
+      "STAI": ["此刻是否紧张、担心或平静", "平时是否容易感到焦虑", "状态焦虑与特质焦虑分开呈现", "实验/比赛前后的焦虑变化"],
+      "PHQ-9": ["兴趣减少或情绪低落频率", "睡眠、食欲、精力等症状频率", "注意力或自我评价困难", "自伤风险相关条目需设置处置流程"],
+      "GAD-7": ["难以控制担忧的频率", "紧张、坐立不安或易激惹", "放松困难", "担忧对日常功能的影响"],
+      "DASS-21": ["低落和缺乏积极体验", "生理性焦虑和恐慌感", "压力过载或难以放松", "三个分量表分别解释"],
+      "PSS": ["感觉事情不可控", "感到压力负荷过高", "相信自己能处理困难", "近期生活要求是否超出资源"],
+      "PANAS": ["积极情绪词的体验强度", "消极情绪词的体验强度", "指定时间窗内的情绪状态", "实验操纵前后情绪变化"],
+      "RSES": ["总体自我接纳", "对自身价值的评价", "正向和负向自尊表述", "反向题需要转换"],
+      "BFI": ["是否喜欢社交和表达", "是否有条理、可靠", "是否情绪稳定或易紧张", "是否开放、好奇、富有想象"],
+      "BIS-11": ["不经思考就行动的倾向", "持续注意困难", "计划性不足", "冲动消费或冒险行为倾向"],
+      "ERQ": ["通过重新理解情境调节情绪", "压住情绪表达的倾向", "情绪调节策略使用频率", "重评和抑制分开计分"],
+      "IRI": ["从他人角度思考问题", "对他人困境的关心", "看到他人痛苦时自己的不适", "沉浸在虚构人物处境中的倾向"],
+      "PSQI": ["主观睡眠质量", "入睡所需时间", "夜间醒来或睡眠干扰", "日间困倦和功能影响"],
+      "IPAQ": ["过去 7 天高强度活动时间", "中等强度活动频率", "步行时间", "久坐时间"],
+      "CSAI-2": ["赛前担忧表现", "身体紧张和唤醒", "对比赛表现的信心", "测量时间点需贴近比赛"],
+      "MAAS": ["做事时是否自动驾驶式地行动", "是否注意当下体验", "走神或分心频率", "日常觉察水平"],
+      "MBI": ["工作后感到情绪耗竭", "对服务对象或工作变得疏离", "职业效能或成就感变化", "分维度报告更合适"],
+      "PCL-5": ["创伤记忆侵入", "回避相关提醒", "负性信念或情绪变化", "警觉性升高或睡眠困难"],
+      "AUDIT": ["饮酒频率和数量", "失控饮酒经历", "饮酒造成的后果", "他人对饮酒的担忧"],
+      "IAT": ["上网时间失控", "因网络使用影响学习/工作", "无法上网时的烦躁", "隐藏或低估网络使用时间"]
+    };
+
+    const questionnairePreviewByDomain = {
+      "临床与健康心理": ["症状出现的频率或强度", "症状对学习、工作或生活的影响", "近期状态与平时状态差异", "风险条目需要伦理处置"],
+      "情绪与压力": ["情绪体验强度", "压力来源和不可控感", "情绪调节或应对方式", "特定时间窗内的变化"],
+      "人格与自我": ["稳定的行为倾向", "自我评价和自我概念", "人际或情绪反应方式", "反向题需要转换"],
+      "社会心理": ["对他人和关系的感受", "社会支持或联结感", "亲社会/攻击/信任倾向", "情境中的社会判断"],
+      "运动心理": ["训练或比赛中的心理状态", "运动动机和坚持原因", "赛前焦虑与自信", "教练、团队或运动身份体验"],
+      "教育心理": ["学习动机和目标", "学习策略使用频率", "考试或课堂压力", "学业自我效能"],
+      "健康与睡眠": ["睡眠、疲劳或健康行为频率", "身体活动或症状影响", "生活质量与日常功能", "过去一周或一个月的时间窗"],
+      "创伤与临床": ["与特定事件相关的反应", "回避、侵入或高警觉", "负性情绪和认知变化", "敏感题项需要知情同意"],
+      "发展与家庭": ["亲子关系和家庭互动", "同伴关系或学校适应", "儿童行为表现", "家长/教师/自评版本差异"]
+    };
+
+    function questionnairePreviewItems(item, profile) {
+      return questionnairePreviewOverrides[item.abbr]
+        || questionnairePreviewByDomain[item.domain]
+        || profile.dimensions.map(dimension => `${dimension}相关的自评体验或行为频率`).slice(0, 4);
+    }
+
+    const questionnaireDomainDefaults = {
+      "临床与健康心理": ["核心症状频率/强度", "功能影响", "风险或严重程度分层"],
+      "情绪与压力": ["情绪体验", "压力知觉", "调节或应对资源"],
+      "人格与自我": ["稳定人格特质", "自我评价或行为倾向", "分维度特征"],
+      "社会心理": ["人际体验", "社会认知", "关系或支持资源"],
+      "运动心理": ["运动情境心理状态", "动机/自信/焦虑", "训练或竞赛适应"],
+      "教育心理": ["学习动机", "学习策略", "学业压力或适应"],
+      "健康与睡眠": ["健康行为", "睡眠质量或疲劳", "日常功能影响"],
+      "创伤与临床": ["创伤暴露或反应", "侵入/回避/高唤醒", "风险筛查"],
+      "发展与家庭": ["家庭关系", "发展适应", "父母/同伴报告差异"]
+    };
+
+    const questionnaireReferenceOverrides = {
+      "BDI-II": {
+        original: "Beck, Steer 与 Brown 的 BDI-II 手册是常用原始来源；多数论文引用手册而非 DOI。",
+        chinese: "中文使用时通常检索“贝克抑郁量表第二版 中文版 信效度 BDI-II”。",
+        doi: "BDI-II 属于授权测验，完整题项和正式计分表应来自授权手册或正式中文版本。"
+      },
+      "BAI": {
+        original: "Beck Anxiety Inventory 的原始来源通常引用 Beck、Epstein、Brown 与 Steer 的量表论文或手册。",
+        chinese: "中文使用时检索“贝克焦虑量表 中文版 信效度 BAI”。",
+        doi: "注意区分焦虑症状筛查与临床诊断；正式条目需核对授权版本。"
+      },
+      "STAI": {
+        original: "State-Trait Anxiety Inventory 通常引用 Spielberger 等人的 STAI 手册。",
+        chinese: "中文使用时检索“状态特质焦虑问卷 中文版 信效度 STAI”。",
+        doi: "报告 S-AI/T-AI 分量表和测量时点，比单纯写总分更清楚。"
+      },
+      "PHQ-9": {
+        original: "PHQ-9 原始使用常引用 Kroenke、Spitzer 与 Williams 关于 PHQ-9 有效性的论文。",
+        chinese: "中文使用时检索“PHQ-9 中文版 信效度 抑郁筛查”。",
+        doi: "PHQ-9 原始论文有 DOI 线索，写作前建议到 Crossref 或 PubMed 核对。"
+      },
+      "GAD-7": {
+        original: "GAD-7 原始使用常引用 Spitzer、Kroenke、Williams 与 Lowe 关于 GAD-7 的验证论文。",
+        chinese: "中文使用时检索“GAD-7 中文版 信效度 广泛性焦虑”。",
+        doi: "GAD-7 原始论文有 DOI 线索，提交论文前需逐条核对格式。"
+      },
+      "DASS-21": {
+        original: "DASS 与 DASS-21 通常从 Lovibond 与 Lovibond 的手册以及短版验证研究定位。",
+        chinese: "中文使用时检索“DASS-21 中文版 抑郁 焦虑 压力 信效度”。",
+        doi: "注意 21 项得分是否乘以 2，以及是否报告三个分量表。"
+      },
+      "PSS": {
+        original: "Perceived Stress Scale 常引用 Cohen、Kamarck 与 Mermelstein 的原始论文。",
+        chinese: "中文使用时检索“知觉压力量表 PSS 中文版 信效度 PSS-10”。",
+        doi: "不同版本题项数不同，需说明 PSS-10、PSS-14 或 PSS-4。"
+      },
+      "PANAS": {
+        original: "PANAS 常引用 Watson、Clark 与 Tellegen 关于积极/消极情绪量表的原始论文。",
+        chinese: "中文使用时检索“PANAS 中文版 积极消极情绪量表 信效度”。",
+        doi: "写作时说明时间窗：此刻、今天、过去几周或一般而言。"
+      },
+      "RSES": {
+        original: "Rosenberg Self-Esteem Scale 通常追溯到 Rosenberg 的自尊经典著作和后续量表研究。",
+        chinese: "中文使用时检索“罗森伯格自尊量表 中文版 信效度 RSES”。",
+        doi: "重点核对反向题处理和中文版本来源。"
+      },
+      "PSQI": {
+        original: "PSQI 常引用 Buysse 等人关于 Pittsburgh Sleep Quality Index 的原始论文。",
+        chinese: "中文使用时检索“匹兹堡睡眠质量指数 中文版 信效度 PSQI”。",
+        doi: "PSQI 原始论文有 DOI 线索；还需报告 7 个成分计分。"
+      },
+      "IPAQ": {
+        original: "IPAQ 通常引用国际体力活动问卷跨国可靠性与效度研究。",
+        chinese: "中文使用时检索“国际体力活动问卷 中文版 信效度 IPAQ 短版”。",
+        doi: "报告 MET-min/week 计算和数据清洗规则。"
+      },
+      "CSAI-2": {
+        original: "CSAI-2 通常引用 Martens 等人的竞赛状态焦虑量表来源或手册。",
+        chinese: "中文使用时检索“竞赛状态焦虑量表 CSAI-2 中文版 运动员 信效度”。",
+        doi: "运动研究中必须报告赛前测量时间点。"
+      },
+      "MAAS": {
+        original: "MAAS 常引用 Brown 与 Ryan 关于 mindful attention awareness 的原始论文。",
+        chinese: "中文使用时检索“正念注意觉知量表 MAAS 中文版 信效度”。",
+        doi: "注意 MAAS 多为单维反向计分结构。"
+      },
+      "CD-RISC": {
+        original: "CD-RISC 常引用 Connor 与 Davidson 关于心理韧性量表的原始论文。",
+        chinese: "中文使用时检索“Connor-Davidson 韧性量表 中文版 CD-RISC 信效度”。",
+        doi: "说明使用 25 项、10 项或其他短版。"
+      },
+      "MBI": {
+        original: "MBI 通常引用 Maslach Burnout Inventory 手册和职业倦怠经典文献。",
+        chinese: "中文使用时检索“Maslach 职业倦怠量表 中文版 MBI 信效度”。",
+        doi: "MBI 版权严格，公开网页不宜提供完整题项。"
+      },
+      "SDQ": {
+        original: "SDQ 通常引用 Goodman 关于 Strengths and Difficulties Questionnaire 的原始研究。",
+        chinese: "中文使用时检索“长处和困难问卷 SDQ 中文版 信效度”。",
+        doi: "需区分家长版、教师版和自评版。"
+      },
+      "PCL-5": {
+        original: "PCL-5 通常引用 DSM-5 PTSD Checklist 资料和后续验证研究。",
+        chinese: "中文使用时检索“PCL-5 中文版 PTSD 信效度 创伤”。",
+        doi: "必须说明锚定的创伤事件。"
+      },
+      "AUDIT": {
+        original: "AUDIT 是 WHO 酒精使用问题筛查工具，常追溯 WHO 手册和跨文化验证文献。",
+        chinese: "中文使用时检索“AUDIT 中文版 酒精使用障碍筛查 信效度”。",
+        doi: "报告临界值和研究样本适配性。"
+      },
+      "IAT": {
+        original: "IAT 常引用 Young 关于 Internet Addiction Test 的量表来源和后续验证研究。",
+        chinese: "中文使用时检索“网络成瘾测验 IAT 中文版 信效度 Young”。",
+        doi: "概念和临界值争议较多，建议用“问题性网络使用”谨慎表述。"
+      }
+    };
+
+    function questionnaireReferenceProfile(item) {
+      const fallback = {
+        original: `原始来源可从“${item.original} ${item.abbr} scale validation manual”定位；优先查原始论文、手册或量表官网。`,
+        chinese: `中文来源可从“${item.original} ${item.abbr} 中文版 信效度 修订”定位；优先使用与样本最接近的中文修订研究。`,
+        doi: "本站先提供文献定位线索；正式投稿前需到 Crossref、PubMed、Web of Science 或出版社页面核对 DOI 和参考文献格式。"
+      };
+      return { ...fallback, ...(questionnaireReferenceOverrides[item.abbr] || {}) };
+    }
+
+    function questionnaireProfile(item) {
+      const override = questionnaireProfileOverrides[item.abbr] || {};
+      const dimensions = override.dimensions || questionnaireDomainDefaults[item.domain] || ["核心构念", "行为/情绪/认知表现", "总分或分维度指标"];
+      return {
+        items: override.items || "题项数因版本而异，请以原始文献或中文修订版为准",
+        response: override.response || "多为 Likert 等级反应；具体锚点和时间窗需按所选版本设置",
+        dimensions,
+        scoring: override.scoring || "通常按总分或分维度计分；正式研究需报告版本、题项数、反向题、计分范围和临界值来源。",
+        copyright: override.copyright || "本站提供结构化使用说明和变量模板；受版权保护的完整原题需从授权手册、原始论文或正式中文修订来源获取。"
+      };
+    }
+
+    function renderQuestionnaireDomains() {
+      const select = document.querySelector("#questionnaireDomain");
+      if (!select || select.dataset.ready) return;
+      [...new Set(questionnaires.map(item => item.domain))].sort((a, b) => a.localeCompare(b, "zh-CN")).forEach(domain => {
+        const option = document.createElement("option");
+        option.value = domain;
+        option.textContent = domain;
+        select.append(option);
+      });
+      select.dataset.ready = "true";
+    }
+
+    function questionnaireMatches(item, query, domain) {
+      const haystack = `${item.original} ${item.abbr} ${item.domain} ${item.originalContext} ${item.chineseContext} ${item.note}`.toLowerCase();
+      return (!query || haystack.includes(query.toLowerCase())) && (domain === "全部" || item.domain === domain);
+    }
+
+    async function copyQuestionnaireText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("检索式已复制，可以粘贴到知网、PubMed、Web of Science 或 Google Scholar");
+      } catch (error) {
+        showToast("当前浏览器不允许自动复制，请手动选中文献线索中的检索式");
+      }
+    }
+
+    function openQuestionnaire(index) {
+      const item = questionnaires[index];
+      if (!item) return;
+      const profile = questionnaireProfile(item);
+      const previewItems = questionnairePreviewItems(item, profile);
+      const refs = questionnaireReferenceProfile(item);
+      const originalQuery = `${item.original} ${item.abbr} questionnaire original validation manual`;
+      const chineseQuery = `${item.original} ${item.abbr} 中文版 信效度 修订`;
+      document.querySelector("#questionnaireTitle").textContent = `${item.original}（${item.abbr}）`;
+      document.querySelector("#questionnaireSubtitle").textContent = `${item.domain} · 原始语境与中文语境结构化说明`;
+      const content = document.querySelector("#questionnaireContent");
+      content.innerHTML = `
+        <div class="questionnaire-notice">${profile.copyright}</div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <strong>题项/版本</strong>
+            <span>${profile.items}</span>
+          </div>
+          <div class="detail-item">
+            <strong>作答方式</strong>
+            <span>${profile.response}</span>
+          </div>
+          <div class="detail-item">
+            <strong>计分方式</strong>
+            <span>${profile.scoring}</span>
+          </div>
+          <div class="detail-item">
+            <strong>中文使用</strong>
+            <span>${item.chineseContext}</span>
+          </div>
+        </div>
+        <section class="questionnaire-panel">
+          <h3>量表测量内容</h3>
+          <ul>
+            ${profile.dimensions.map(dimension => `<li>${dimension}</li>`).join("")}
+          </ul>
+        </section>
+        <section class="questionnaire-panel">
+          <h3>题目预览（非原题改写）</h3>
+          <p class="description">以下只展示题项主题和改写示例，用来理解测量方向；不是原量表题目，不能直接替代正式量表。</p>
+          <div class="preview-list">
+            ${previewItems.map((itemText, previewIndex) => `
+              <div class="preview-item">
+                <small>预览 ${previewIndex + 1}</small>
+                ${itemText}
+              </div>
+            `).join("")}
+          </div>
+        </section>
+        <section class="questionnaire-panel">
+          <h3>论文方法部分可写信息</h3>
+          <ul>
+            <li>说明量表名称、缩写、版本、中文修订来源和适用样本。</li>
+            <li>报告题项数、反应等级、时间窗、反向题处理、总分/分维度得分范围。</li>
+            <li>报告本研究样本中的内部一致性，如 Cronbach's α 或 McDonald's ω。</li>
+            <li>若用于临床筛查，需写明临界值来源，并避免把问卷分数直接表述为诊断结果。</li>
+          </ul>
+        </section>
+        <section class="questionnaire-panel">
+          <h3>原始语境</h3>
+          <p class="description">${item.originalContext}</p>
+          <p class="description">${item.note}</p>
+        </section>
+        <section class="questionnaire-panel">
+          <h3>文献线索（站内）</h3>
+          <ul>
+            <li><strong>原始来源：</strong>${refs.original}</li>
+            <li><strong>中文修订：</strong>${refs.chinese}</li>
+            <li><strong>DOI/授权提醒：</strong>${refs.doi}</li>
+          </ul>
+          <div class="reference-query"><strong>中文检索式：</strong>${chineseQuery}</div>
+          <div class="reference-query"><strong>英文检索式：</strong>${originalQuery}</div>
+        </section>
+        <div class="card-actions">
+          <button class="action-btn secondary" type="button" data-copy-reference="chinese">复制中文检索式</button>
+          <button class="action-btn secondary" type="button" data-copy-reference="original">复制英文检索式</button>
+        </div>
+      `;
+      content.querySelector("[data-copy-reference='chinese']").addEventListener("click", () => copyQuestionnaireText(chineseQuery));
+      content.querySelector("[data-copy-reference='original']").addEventListener("click", () => copyQuestionnaireText(originalQuery));
+      showModal("#questionnaireModal");
+    }
+
+    function renderQuestionnaires() {
+      const search = document.querySelector("#questionnaireSearch");
+      const domain = document.querySelector("#questionnaireDomain");
+      const cards = document.querySelector("#questionnaireCards");
+      const count = document.querySelector("#questionnaireCount");
+      if (!search || !domain || !cards || !count) return;
+      const visible = questionnaires.filter(item => questionnaireMatches(item, search.value.trim(), domain.value));
+      count.textContent = `${visible.length} 项`;
+      cards.innerHTML = visible.map(item => {
+        const index = questionnaires.indexOf(item);
+        return `
+        <article class="card">
+          <div class="card-top">
+            <div>
+              <h3 class="task-title">${item.original}</h3>
+              <div class="tag-row">
+                <span class="tag">${item.abbr}</span>
+                <span class="tag">${item.domain}</span>
+              </div>
+            </div>
+            <span class="difficulty">问卷</span>
+          </div>
+          <dl>
+            <div class="row">
+              <dt>原始语境</dt>
+              <dd>${item.originalContext}</dd>
+            </div>
+            <div class="row">
+              <dt>中文语境</dt>
+              <dd>${item.chineseContext}</dd>
+            </div>
+            <div class="row">
+              <dt>使用提醒</dt>
+              <dd>${item.note}</dd>
+            </div>
+          </dl>
+          <div class="card-actions">
+            <button class="action-btn" type="button" data-questionnaire="${index}">查看量表内容</button>
+          </div>
+        </article>
+      `;
+      }).join("");
+      cards.querySelectorAll("[data-questionnaire]").forEach(button => {
+        button.addEventListener("click", () => openQuestionnaire(Number(button.dataset.questionnaire)));
+      });
+    }
+
+    renderQuestionnaireDomains();
+
     function showModal(selector) {
       const modal = document.querySelector(selector);
       modal.classList.add("open");
@@ -2624,15 +3960,25 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
 
     function closeModals() {
       clearTimeout(currentRunner?.timeout);
+      clearTimeout(workbenchRun?.timeout);
       document.querySelectorAll(".modal").forEach(modal => {
         modal.classList.remove("open");
         modal.setAttribute("aria-hidden", "true");
       });
       currentRunner = null;
+      workbenchRun = null;
     }
 
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape") closeModals();
+      if (event.key === "Escape") {
+        closeModals();
+        return;
+      }
+      if (workbenchRun?.awaiting) {
+        event.preventDefault();
+        recordWorkbenchResponse(event.key);
+        return;
+      }
       if (!currentRunner || !currentRunner.awaiting) return;
       const key = event.key.toLowerCase();
       if (["f", "j", "k", "d", "arrowleft", "arrowright", " "].includes(key)) {
@@ -2808,6 +4154,11 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
       downloadTextFile("论文方法复现实验流程图.svg", flowSvg(currentMethodFlow));
     });
 
+    document.querySelector("#addWorkbenchTrial").addEventListener("click", addWorkbenchTrial);
+    document.querySelector("#loadWorkbenchPreset").addEventListener("click", loadWorkbenchPreset);
+    document.querySelector("#runWorkbench").addEventListener("click", runWorkbench);
+    document.querySelector("#exportWorkbench").addEventListener("click", exportWorkbenchConfig);
+
     document.querySelectorAll(".module-tab").forEach(tab => {
       tab.addEventListener("click", () => {
         const target = tab.dataset.module;
@@ -2820,6 +4171,10 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
 
     searchInput.addEventListener("input", renderCards);
     domainSelect.addEventListener("change", renderCards);
+    document.querySelector("#questionnaireSearch").addEventListener("input", renderQuestionnaires);
+    document.querySelector("#questionnaireDomain").addEventListener("change", renderQuestionnaires);
+    renderWorkbench();
+    renderQuestionnaires();
     renderTopicButtons();
     renderCards();
   </script>
