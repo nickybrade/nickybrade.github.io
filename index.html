@@ -748,6 +748,48 @@
       max-width: 680px;
     }
 
+    .literature-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 16px;
+    }
+
+    .literature-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .literature-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 14px;
+    }
+
+    .literature-item strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .literature-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .doi-link {
+      color: var(--accent);
+      font-weight: 800;
+      text-decoration: none;
+      word-break: break-all;
+    }
+
     @media (max-width: 680px) {
       .key-grid,
       .runner-setup,
@@ -1144,6 +1186,20 @@
         <button class="close-btn" type="button" data-close-modal aria-label="关闭">×</button>
       </div>
       <div id="runnerContent"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="literatureModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="literatureTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="literatureTitle">近期文献</h2>
+          <p class="description" id="literatureSubtitle"></p>
+        </div>
+        <button class="close-btn" type="button" data-close-modal aria-label="关闭">×</button>
+      </div>
+      <div class="literature-tools" id="literatureTools"></div>
+      <div class="literature-list" id="literatureResults"></div>
     </div>
   </div>
 
@@ -2096,6 +2152,128 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
       downloadTextFile(`${task.name.replace(/[\\/:*?"<>|]/g, "_")}_绘图模板.svg`, svg);
     }
 
+    function literatureQuery(task) {
+      const name = task.name.toLowerCase();
+      const rules = [
+        ["stroop", '"Stroop task" psychology'],
+        ["flanker", '"Eriksen flanker task" psychology'],
+        ["go/no-go", '"go/no-go task" psychology'],
+        ["go no go", '"go/no-go task" psychology'],
+        ["stop-signal", '"stop-signal task" psychology'],
+        ["n-back", '"n-back task" working memory'],
+        ["sternberg", '"Sternberg memory scanning task"'],
+        ["posner", '"Posner cueing task" attention'],
+        ["visual search", '"visual search task" psychology'],
+        ["iowa", '"Iowa Gambling Task"'],
+        ["delay discounting", '"delay discounting task" psychology'],
+        ["dot-probe", '"dot-probe task" attention bias'],
+        ["simon", '"Simon task" cognitive control'],
+        ["oddball", '"oddball task" P300 psychology'],
+        ["ax-cpt", '"AX-CPT" cognitive control'],
+        ["task switching", '"task switching paradigm" psychology'],
+        ["sart", '"SART" sustained attention task'],
+        ["attentional blink", '"attentional blink" task'],
+        ["implicit association", '"Implicit Association Test"'],
+        ["recognition memory", '"recognition memory task" psychology'],
+        ["serial reaction time", '"serial reaction time task"'],
+        ["navon", '"Navon task" global local'],
+        ["balloon analogue", '"Balloon Analogue Risk Task"'],
+        ["cyberball", '"Cyberball" social exclusion task'],
+        ["wisconsin", '"Wisconsin Card Sorting Test"'],
+        ["tower of london", '"Tower of London task" planning'],
+        ["corsi", '"Corsi block tapping task"'],
+        ["digit span", '"digit span task" working memory'],
+        ["lexical decision", '"lexical decision task"'],
+        ["semantic priming", '"semantic priming task"'],
+        ["fear conditioning", '"fear conditioning task" human'],
+        ["ultimatum", '"Ultimatum Game" psychology'],
+        ["dictator", '"Dictator Game" psychology'],
+        ["trust game", '"Trust Game" psychology'],
+        ["public goods", '"Public Goods Game" psychology'],
+        ["moral dilemma", '"moral dilemma task" psychology'],
+        ["mental rotation", '"mental rotation task" psychology'],
+        ["psychomotor vigilance", '"psychomotor vigilance task"'],
+        ["multiple object tracking", '"multiple object tracking" task'],
+        ["random dot", '"random dot motion" task'],
+        ["temporal order", '"temporal order judgment" task'],
+        ["reading span", '"reading span task"'],
+        ["operation span", '"operation span task"'],
+        ["weather prediction", '"weather prediction task" probabilistic classification']
+      ];
+      const matched = rules.find(([key]) => name.includes(key));
+      if (matched) return matched[1];
+      const englishName = task.name.replace(/[\u4e00-\u9fff]/g, " ").replace(/\s+/g, " ").trim();
+      const topic = task.topics[0] || "psychology";
+      return `${englishName || task.name} ${topic} psychology task`;
+    }
+
+    function literatureYear(item) {
+      const parts = item["published-print"]?.["date-parts"] || item["published-online"]?.["date-parts"] || item.created?.["date-parts"];
+      return parts?.[0]?.[0] || "年份未知";
+    }
+
+    function literatureTitle(item) {
+      return item.title?.[0] || "未提供题名";
+    }
+
+    async function openLiterature(index) {
+      const task = tasks[index];
+      const query = literatureQuery(task);
+      const encoded = encodeURIComponent(query);
+      document.querySelector("#literatureTitle").textContent = `${task.name} · 近期文献`;
+      document.querySelector("#literatureSubtitle").textContent = `检索关键词：${query}。默认显示 2020 年以来 Crossref 收录的期刊论文，结果用于快速了解学者如何使用该任务。`;
+      document.querySelector("#literatureTools").innerHTML = `
+        <a class="action-btn secondary" href="https://scholar.google.com/scholar?q=${encoded}" target="_blank" rel="noopener">Google Scholar</a>
+        <a class="action-btn secondary" href="https://search.crossref.org/?q=${encoded}" target="_blank" rel="noopener">Crossref</a>
+        <a class="action-btn secondary" href="https://pubmed.ncbi.nlm.nih.gov/?term=${encoded}" target="_blank" rel="noopener">PubMed</a>
+      `;
+      document.querySelector("#literatureResults").innerHTML = `<div class="literature-item"><strong>正在检索近期文献...</strong><span class="description">如果网络受限，可以使用上方 Scholar / Crossref / PubMed 入口手动检索。</span></div>`;
+      showModal("#literatureModal");
+
+      try {
+        const url = `https://api.crossref.org/works?query.bibliographic=${encoded}&filter=from-pub-date:2020-01-01,type:journal-article&select=DOI,title,container-title,published-print,published-online,created,URL,is-referenced-by-count&rows=8&sort=published&order=desc`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Crossref ${response.status}`);
+        const data = await response.json();
+        const items = (data.message?.items || []).filter(item => item.title?.length);
+        renderLiterature(items, query);
+      } catch (error) {
+        document.querySelector("#literatureResults").innerHTML = `
+          <div class="literature-item">
+            <strong>自动检索失败</strong>
+            <p class="description">当前网络或浏览器策略可能阻止 Crossref API。请使用上方 Google Scholar / Crossref / PubMed 按钮继续检索。</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderLiterature(items, query) {
+      const target = document.querySelector("#literatureResults");
+      if (!items.length) {
+        target.innerHTML = `<div class="literature-item"><strong>没有检索到近期 DOI 结果</strong><p class="description">可尝试上方外部检索入口，或改用更宽泛关键词：${query}</p></div>`;
+        return;
+      }
+      target.innerHTML = items.map(item => {
+        const doi = item.DOI;
+        const journal = item["container-title"]?.[0] || "期刊未知";
+        const year = literatureYear(item);
+        const cited = item["is-referenced-by-count"] ?? 0;
+        const title = literatureTitle(item);
+        const doiUrl = doi ? `https://doi.org/${doi}` : item.URL;
+        return `
+          <article class="literature-item">
+            <strong>${title}</strong>
+            <div class="literature-meta">
+              <span>${year}</span>
+              <span>${journal}</span>
+              <span>Crossref cited by ${cited}</span>
+            </div>
+            ${doi ? `<a class="doi-link" href="${doiUrl}" target="_blank" rel="noopener">DOI: ${doi}</a>` : `<span class="description">Crossref 未提供 DOI</span>`}
+          </article>
+        `;
+      }).join("");
+    }
+
     function openRunner(index) {
       const task = tasks[index];
       const type = runnerType(task);
@@ -2597,6 +2775,7 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
           <div class="card-actions">
             <button class="action-btn" type="button" data-runner="${tasks.indexOf(task)}">在线试测</button>
             <button class="action-btn secondary" type="button" data-detail="${tasks.indexOf(task)}">SCI写作细节</button>
+            <button class="action-btn secondary" type="button" data-literature="${tasks.indexOf(task)}">近期文献</button>
             <button class="action-btn secondary" type="button" data-flow="${tasks.indexOf(task)}">下载绘图模板</button>
           </div>
         </article>
@@ -2606,6 +2785,9 @@ Mind Wandering Reading Task|教育心理学;认知心理学|走神;阅读理解|
       });
       cards.querySelectorAll("[data-detail]").forEach(button => {
         button.addEventListener("click", () => openDetail(Number(button.dataset.detail)));
+      });
+      cards.querySelectorAll("[data-literature]").forEach(button => {
+        button.addEventListener("click", () => openLiterature(Number(button.dataset.literature)));
       });
       cards.querySelectorAll("[data-flow]").forEach(button => {
         button.addEventListener("click", () => downloadTaskFlow(Number(button.dataset.flow)));
